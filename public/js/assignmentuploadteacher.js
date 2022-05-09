@@ -214,5 +214,22 @@
                 //}
             });
         });
+
+        jQuery("#deploycourse").on('click',function(event){
+            event.preventDefault();
+
+            coursename = document.getElementById('coursename').value;
+
+            var requestConfig = {
+                method: 'POST',
+                url: '/mainpage/deploycourse',
+                contentType: 'application/json',
+                data: JSON.stringify({coursename: coursename})
+            };
+
+            jQuery.ajax(requestConfig).then(function(responseMessage){
+
+            })
+        })
     });
 })(jQuery);
