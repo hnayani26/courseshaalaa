@@ -3,6 +3,7 @@ const router = express.Router();
 const data = require('../data');
 const enrolledData = data.enrolled_courses;
 const fs = require('fs');
+var xss = require("xss");
 
 <<<<<<< HEAD
 
@@ -83,7 +84,7 @@ const fs = require('fs');
 // });
 =======
 router.get('enrolled/:id', async (req, res) => {
-    const id = req.params.id;
+    const id = xss(req.params.id);
     const enrolledCourse = await enrolledData.getEnrolledCourseById(id);
     const teacher = enrolledCourse.teacher;
     const courseName = enrolledCourse.course_name;
@@ -95,7 +96,7 @@ router.get('enrolled/:id', async (req, res) => {
 });
 
 router.get('enrolled/:id', async (req, res) => {
-    const id = req.params.id;
+    const id = xss(req.params.id);
     const enrolledCourse = await enrolledData.getEnrolledCourseById(id);
     const teacher = enrolledCourse.teacher;
     const courseName = enrolledCourse.course_name;
