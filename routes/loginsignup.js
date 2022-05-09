@@ -10,6 +10,7 @@ const coursesCollection = mongoCollection.courses;
 const studentCoursersCollection = mongoCollection.studentcourses;
 const dropdownCollection = mongoCollection.dropdowndata;
 const userCollection = mongoCollection.users;
+var xss = require("xss");
 
 router.get("/", function (req, res) {
   res.render("./loginsignup/login", { title: "login", navbar: false });
@@ -21,7 +22,7 @@ router.get("/signup", function (req, res) {
 
 router.post("/signup", async function (req, res, next) {
   
-  let body = req.body;
+  let body = xss(req.body);
   let usersdata = data.users;
   try {
     if (
@@ -44,7 +45,8 @@ router.post("/signup", async function (req, res, next) {
     body.firstname = await validation.checkString(body.firstname, "First Name");
     body.lastname = await validation.checkString(body.lastname, "Last Name");
   } catch (error) {
-    return next(error);
+    
+    return res.render('./error')  //next(error);
   }
 
   let user = {
@@ -72,7 +74,7 @@ router.post("/signup", async function (req, res, next) {
 });
 
 router.post("/", async function (req, res) {
-  let body = req.body;
+  let body = xss(req.body);
   let usersdata = data.users;
   // const courseData = JSON.parse(
   //   fs.readFileSync(`${__dirname}/seeder/courses.json`, "utf-8")

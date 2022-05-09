@@ -4,7 +4,7 @@ const studentcourses = mongoCollections.studentcourses;
 const { ObjectId } = require("mongodb");
 const upload = require("express-fileupload");
 const { dropdowndata } = require("../config/mongoCollections");
-const AppError = require("../middleware/appError");
+// const AppError = require("../middleware/appError");
 const { ErrorType } = require("../middleware/enum");
 
 
@@ -12,7 +12,7 @@ async function gettagsdropdown(type){
     const dropdowndatacollection = await dropdowndata();
       const info = await dropdowndatacollection.find({}).toArray();
       if (!info) {
-        throw new AppError("failed to get tags", ErrorType.not_found);
+        throw "failed to get tags";
       }
       return info;
 

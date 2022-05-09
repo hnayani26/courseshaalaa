@@ -7,12 +7,11 @@ const router = express.Router();
 const data = require("../data");
 const AppError = require("../middleware/appError");
 const { ErrorType } = require("../middleware/enum");
-
+var xss = require("xss");
 
 router.get("/", async function (req, res, next) {
     try {
-      let username = req.session.user.username;
-      // let username = "user1";
+      let username = xss(req.session.user.username);
       let coursesData = data.studentcourses;
       let courses = await coursesData.allCourses();
       let enroll=await coursesData.enrolledcourses(username)
@@ -69,29 +68,30 @@ router.get("/", async function (req, res, next) {
       // console.log(enroll[0]._id.toString());
       res.render("./mainpage/students", { navbar: true, courses: courses,enrolled:enroll,recom:recommenda});
     } catch (error) {
-        throw error;
+        res.render('./error')
     }
   });
 
   router.get("/reviews", async function (req,res,next){
     try{
-      let username = req.session.user.username;
+      let username = xss(req.session.user.username);
       let reviewData = data.reviews;
       let reviews2=await reviewData.getallreviews()
       res.render("./mainpage/reviews",{reviews:reviews2})
     }
     catch (error) {
-      next(error);
+      // next(error);
+      res.render("./error")
     }
   })
 
   router.post("/reviews", async function (req,res,next){
     try{
       
-      let ratings=req.body.Ratings
-      let reviews=req.body.review
+      let ratings=xss(req.body.Ratings)
+      let reviews=xss(req.body.review)
       let teacherusername="user3"
-      let username = req.session.user.username;
+      let username = xss(req.session.user.username);
       let coursename="Web"
       let reviewData = data.reviews;
       let reviews2=await reviewData.addreview(coursename,username,teacherusername,ratings,reviews)
@@ -99,13 +99,14 @@ router.get("/", async function (req, res, next) {
       res.render("./mainpage/reviews",{reviews:reviews3})
     }
     catch (error) {
-      next(error);
+      // next(error);
+      res.render("./error")
     }
   })
 
 
 router.get('/enrolled/:id', async (req, res) => {
-    const id = req.params.id;
+    const id = xss(req.params.id);
     let courses = data.enrolled_courses
     const enrolledCourse = await courses.getEnrolledCourseById(id);
     // const teacher = enrolledCourse.teacher;
@@ -119,7 +120,7 @@ router.get('/enrolled/:id', async (req, res) => {
 
 
 router.get('/not_enrolled/:id', async (req, res) => {
-  const id = req.params.id;
+  const id = xss(req.params.id);
   let courses = data.enrolled_courses
   const enrolledCourse = await courses.getEnrolledCourseById(id);
   enrolledCourse._id = enrolledCourse._id.toString();
@@ -134,8 +135,8 @@ router.get('/not_enrolled/:id', async (req, res) => {
 
 
 router.get('/enrollthestudent/:id', async(req,res)=>{
-  const id  = req.params.id;
-  const username = req.session.user.username;
+  const id  = xss(req.params.id);
+  const username = xss(req.session.user.username);
   let courses = data.enrolled_courses;
   const enrolledCourse = await courses.onEnrollment(id,username);
   res.redirect('/student');
