@@ -50,6 +50,13 @@ router.get('/',async function(req,res){                 // when ever the login t
     res.render("./mainpage/teachers",{navbar: true,courses : courses})
 })
 
+router.get('/profile', async function(req, res) {
+    let username = req.session.user.username; 
+    let usersData = data.users;
+    let userDetails = await usersData.findUserByUsername(username);
+    res.render("./mainpage/profile", {userDetails: userDetails});
+});
+
 router.get('/createcourse', async function(req,res){
     res.render("./mainpage/createcourse",{navbar:true})
 })

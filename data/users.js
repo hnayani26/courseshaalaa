@@ -45,4 +45,9 @@ module.exports = {
       return false;
     }
   },
+  findUserByUsername: async (username) => {
+    const usercollection = await users();
+    const searchedUser = usercollection.findOne({username: username});
+    return searchedUser;
+  }
 };
