@@ -99,7 +99,11 @@ router.get('/gettagsfordropdown',async function(req,res){
         throw e
     }
 
+<<<<<<< HEAD
     console.log(tags[0].tags);
+=======
+    // console.log(tags[0].tags);
+>>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
     return res.json({tags: tags[0].tags});
 })
 

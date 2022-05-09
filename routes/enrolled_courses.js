@@ -4,6 +4,7 @@ const data = require('../data');
 const enrolledData = data.enrolled_courses;
 const fs = require('fs');
 
+<<<<<<< HEAD
 
 
 // router.get('/videos/:id/:index', async(req, res) => {
@@ -80,6 +81,31 @@ const fs = require('fs');
 //     //console.log('Router Course: ',course)
 //     res.render('course/course', {course: course});
 // });
+=======
+router.get('enrolled/:id', async (req, res) => {
+    const id = req.params.id;
+    const enrolledCourse = await enrolledData.getEnrolledCourseById(id);
+    const teacher = enrolledCourse.teacher;
+    const courseName = enrolledCourse.course_name;
+    const course = await enrolledData.getCourseByNameAndCourse(courseName, teacher);
+    course.assignments = enrolledCourse.assignments;
+    // course.enrolledCourseId = id;
+    //console.log('Router Course: ',course)
+    res.render('course/course', {course: course});
+});
+
+router.get('enrolled/:id', async (req, res) => {
+    const id = req.params.id;
+    const enrolledCourse = await enrolledData.getEnrolledCourseById(id);
+    const teacher = enrolledCourse.teacher;
+    const courseName = enrolledCourse.course_name;
+    const course = await enrolledData.getCourseByNameAndCourse(courseName, teacher);
+    course.assignments = enrolledCourse.assignments;
+    // course.enrolledCourseId = id;
+    //console.log('Router Course: ',course)
+    res.render('course/course', {course: course});
+});
+>>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
 
 
 module.exports=router;
