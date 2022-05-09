@@ -17,12 +17,13 @@ router.get('/getassignments',async function(req,res){
     // let coursedata = 
 })
 
-router.get('/assignmentdetails/:id', async function(req,res){
-    let coursename = req.params.id;
+router.get('/assignmentdetails/:assignmentid/:coursename', async function(req,res){
+    let coursename = req.params.coursename;
     //let username = req.session.user.username;
-    let teacherusername = 'user3'
-    let assignment_id = "62723161f7dadbb5b6d1cd8c"
-
+    // let teacherusername = 'user3'
+    let teacherusername = req.session.username;
+    // let assignment_id = "62723161f7dadbb5b6d1cd8c"
+    let assignment_id = req.params.assignmentid;
     let initialpath = '/public/uploads/'
 
     // try {
@@ -40,24 +41,29 @@ router.get('/assignmentdetails/:id', async function(req,res){
     let result = await studentsperassignment.studentsperassignment(coursename,teacherusername,assignment_id)
     // console.log(result);
     // console.log(result[0].studentusername)
-    let studentusername = result[0].studentusername
-    result = result[0].assignments;
-    console.log(result)
-    result[0].studentusername = studentusername;
-
+    if(result.length >0){
+        let studentusername = result[0].studentusername
+        result = result[0].assignments;
+        console.log(result)
+        result[0].studentusername = studentusername;
+        return res.render("./mainpage/gradesperassignment",{title: "grades", assignments: result, coursename: coursename, assignment_id: assignment_id.toString()})
+    }
     // console.log(result[0]);
     return res.render("./mainpage/gradesperassignment",{title: "grades", assignments: result, coursename: coursename, assignment_id: assignment_id.toString()})
 })
 
 router.get('/:id',async function(req,res){
     let coursename = req.params.id;
-    let username = 'user3';
+    // let username = 'user3';
+    let username = req.session.user.username;
     // console.log(id + " " + username)
 
     let gettotalassignments = data.courses;
     let result = await gettotalassignments.gettotalssignments(coursename,username);
-    result = result[0].Assignments;
-    console.log(result[0].Assignments);
+    if(result.length !== 0){
+        result = result[0].assignments;
+        console.log(result[0].assignments);
+    }
     // for(let i = 0 ; i < result.length ; i++){
     //     console.log(result[i].sequencenumber)
     //     // result[i].sequencenumber = result[i].sequencenumber.toString();
@@ -66,8 +72,8 @@ router.get('/:id',async function(req,res){
 })
 
 router.post('/updategrades',async function(req,res){
-    // let teacherusername = req.session.user.username; 
-    let teacherusername = 'user3'
+    let teacherusername = req.session.user.username; 
+    // let teacherusername = 'user3'
     let studentusername = req.body.studentusername;
     let grade = req.body.grade;
     let assignment_id = req.body.assignment_id;
@@ -77,9 +83,10 @@ router.post('/updategrades',async function(req,res){
     let result = await updategrades.updatestudentgrades(grade,assignment_id,studentusername,teacherusername,coursename);
 })
 
+
 router.post('/postgrades',async function(req,res){
-    // let teacherusername = req.session.user.username;
-    let teacherusername = "user3";
+    let teacherusername = req.session.user.username;
+    // let teacherusername = "user3";
     let bodydata = req.body;
     bodydata.teacherusername = teacherusername;
     let post_grades = data.courses;

@@ -5,6 +5,11 @@ const data = require("../data");
 const AppError = require("../middleware/appError");
 const { ErrorType } = require("../middleware/enum");
 const validation = require("../middleware/validation");
+const mongoCollection = require("../config/mongoCollections");
+const coursesCollection = mongoCollection.courses;
+const studentCoursersCollection = mongoCollection.studentcourses;
+const dropdownCollection = mongoCollection.dropdowndata;
+const userCollection = mongoCollection.users;
 
 router.get("/", function (req, res) {
   res.render("./loginsignup/login", { title: "login", navbar: false });
@@ -15,6 +20,7 @@ router.get("/signup", function (req, res) {
 });
 
 router.post("/signup", async function (req, res, next) {
+  
   let body = req.body;
   let usersdata = data.users;
   try {
@@ -33,6 +39,7 @@ router.post("/signup", async function (req, res, next) {
     }
     body.username = await validation.checkString(body.username, "User-Name");
     body.password = await validation.checkString(body.password, "Password");
+    body.email = await validation.checkString(body.email, "Email");
     body.email = await validation.checkEmail(body.email, "Email");
     body.firstname = await validation.checkString(body.firstname, "First Name");
     body.lastname = await validation.checkString(body.lastname, "Last Name");
@@ -67,6 +74,25 @@ router.post("/signup", async function (req, res, next) {
 router.post("/", async function (req, res) {
   let body = req.body;
   let usersdata = data.users;
+  // const courseData = JSON.parse(
+  //   fs.readFileSync(`${__dirname}/seeder/courses.json`, "utf-8")
+  // );
+  // const collection1 = await coursesCollection();
+  // await collection1.insertMany(courseData);
+  // const studentCoursesData = JSON.parse(
+  //   fs.readFileSync(`${__dirname}/seeder/studentcourses.json`, "utf-8")
+  // );
+  // const collection2 = await studentCoursersCollection();
+  // await collection2.insertMany(studentCoursesData);
+  // const dropdowndata = JSON.parse(
+  //   fs.readFileSync(`${__dirname}/seeder/dropdowndata.json`, "utf-8")
+  // );
+  // const collection3 = await dropdownCollection();
+  // await collection3.insertMany(dropdowndata);
+  // const usersData = JSON.parse(
+  //   fs.readFileSync(`${__dirname}/seeder/users.json`, "utf-8")
+  // );
+  
   try {
     if (!body.username || !body.password) {
       throw new AppError(
@@ -78,12 +104,20 @@ router.post("/", async function (req, res) {
       username: body.username,
       password: body.password,
     };
+ 
     let flag = await usersdata.findUser(user);
-    if (flag) {
+    console.log(flag);
+    if (flag.usertype==='teacher') {
       req.session.user = { username: body.username };
-      console.log("user entered");
+      
       res.redirect("/mainpage");
-    } else {
+    } 
+    else if(flag.usertype==='student'){
+      req.session.user = { username: body.username };
+      
+      res.redirect("/student");
+    }
+    else {
       console.log("wrong input");
       throw new AppError("Incorrect Credential!!!", ErrorType.invalid_request);
     }
@@ -92,5 +126,11 @@ router.post("/", async function (req, res) {
     next(e);
   }
 });
+
+
+router.get('/logout',async(req,res)=>{
+  req.session.destroy()
+  res.redirect('/login')
+})
 
 module.exports = router;
