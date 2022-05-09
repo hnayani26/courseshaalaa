@@ -2,25 +2,16 @@ const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const courses = mongoCollections.courses;
 const studentcourses =mongoCollections.studentcourses;
-<<<<<<< HEAD
-const enrolledcourses = mongoCollections.studentcourses;
-=======
->>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
 const { ObjectId } = require('mongodb');
 const upload = require('express-fileupload');
 const { dropdowndata } = require('../config/mongoCollections');
 
-<<<<<<< HEAD
-
-
-=======
 const getCourseByNameAndCourse = async(courseName, username) => {
     const courses = await courseCollection();
     const course = await courses.findOne({$and:[{username: username}, {coursename: courseName}]})
     //console.log('Course: ',course)
     return course;
 }
->>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
 
 const getAssigmentById = async(id) => {
     const assignments = await assignmentCollection();
@@ -105,32 +96,9 @@ async function onEnrollment(id,studentusername)
     }
 }
 
-<<<<<<< HEAD
-const updateVideoSequenceByUserAndCourse = async(id, seq) => {
-    const studentcoursescollection = await studentcourses();
-    const res = await studentcoursescollection.updateOne({"_id":ObjectId(id)}, 
-        {$set : {"videos.$.sequencenumber": seq}});
-        if(res.upsertedCount == 0){
-            throw "Couldn't update video sequence"
-        } 
-}
-
-
-const getVideoSequenceByUserAndCourse = async(courseName, username) => {
-    const stucoursescollection = await studentcourses();
-    const enrolledCourse = await stucoursescollection.findOne({$and:[{"teacherusername": username}, {"coursename": courseName}]})
-    return enrolledCourse.videos;
-}
-
 const getEnrolledCourseById = async(id) => {
     const coursescollection = await courses();
     const enrolledCourse = await coursescollection.findOne({_id: ObjectId(id)});
-    console.log(enrolledCourse)
-=======
-const getEnrolledCourseById = async(id) => {
-    const coursescollection = await courses();
-    const enrolledCourse = await coursescollection.findOne({_id: ObjectId(id)});
->>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
     return enrolledCourse;
 }
 
@@ -200,13 +168,5 @@ async function onAssSubmit(user)
 
 module.exports={
     getEnrolledCourseById,
-<<<<<<< HEAD
-    onEnrollment,
-    getVideoSequenceByUserAndCourse,
-    updateVideoSequenceByUserAndCourse,
-    getCourseByNameAndCourse
-
-=======
     onEnrollment
->>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
 }
