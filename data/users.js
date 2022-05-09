@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const AppError = require("../middleware/appError");
 const { ErrorType } = require("../middleware/enum");
-const saltRounds = 16;
+const saltRounds = 5;
 
 module.exports = {
   addUser: async (user) => {
@@ -37,7 +37,7 @@ module.exports = {
     });
     if (searchedUser) {
       if (await bcrypt.compare(user.password, searchedUser.password)) {
-        return true;
+        return searchedUser;
       } else {
         return false;
       }

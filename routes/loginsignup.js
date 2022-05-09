@@ -79,11 +79,18 @@ router.post("/", async function (req, res) {
       password: body.password,
     };
     let flag = await usersdata.findUser(user);
-    if (flag) {
+    console.log(flag);
+    if (flag.usertype==='teacher') {
       req.session.user = { username: body.username };
-      console.log("user entered");
+      
       res.redirect("/mainpage");
-    } else {
+    } 
+    else if(flag.usertype==='student'){
+      req.session.user = { username: body.username };
+      
+      res.redirect("/student");
+    }
+    else {
       console.log("wrong input");
       throw new AppError("Incorrect Credential!!!", ErrorType.invalid_request);
     }

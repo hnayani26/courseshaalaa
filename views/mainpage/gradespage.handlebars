@@ -13,7 +13,7 @@
                 <tr>
                     <td> Assignment {{this.sequencenumber}}</td>
                     <td> {{this.title}}</td>
-                    <td> <button class="btn btn-success" > view submissions </button></td>
+                    <td> <a class="btn btn-success" href="/grades/assignmentdetails/{{this._id}}/{{this.coursename}}"> view submissions </a></td>
                 </tr>
             {{/each}}
         </tbody>

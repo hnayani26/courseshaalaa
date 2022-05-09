@@ -1,6 +1,5 @@
-// const { json } = require("express/lib/response");
-
 (function($){
+    var $formvalidate = jQuery('#videoinput');
 
     function bindEvents(deleteId,coursename,path){
         jQuery(`#${deleteId}`).on('click',function(event){
@@ -15,8 +14,7 @@
             };
 
             jQuery.ajax(requestConfig).then(function(responseMessage){
-                // console.log(responseMessage);
-                // var coursename = document.getElementById('coursename').value;
+                
                 var requestConfig = {
                     method: 'GET',
                     url: '/mainpage/uploadedvideos/'+ coursename,
@@ -32,21 +30,30 @@
                         console.log(x);
                         var videosblock = jQuery('#videos')
                         console.log(x.videotitle)
-                        videosblock.append(jQuery('<div>').attr("class","container p-2")
-                        .append((jQuery('<div>')).attr("class","row")
-                        .append(jQuery('<div>').attr("class","col-6")
-                        .append(jQuery('<div>').attr('class',"container p-2")
-                        .append(jQuery('<video controls>').attr("style","height: -moz-available; width: -moz-available;")
-                        .append(jQuery('<source>').attr("src",x.path).attr("type","video/mp4")))))
-                        .append(jQuery('<div>').attr("class","col-6")
-                        .append(jQuery('<div>').attr("class","container p-2")
-                        .append(jQuery('<div>').attr('class',"row p-2").append('<h3>').html(x.videotitle))
-                        .append(jQuery('<div>').attr('class',"row p-2").html(x.videodescription))
-                        .append(jQuery('<div>').attr('class','row p-2').html(x.sequencenumber))
-                        .append(jQuery('<div>').attr('class',"row p-2").append(jQuery('<button>').attr('class','btn btn-danger w-25').attr('id',x.sequencenumber).html("Delete")))
-                        ))))
+                        let video_block = `
+                            <div class="container m-0">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="container p-2">
+                                            <video controls style="height: 300px; width:533.25px">
+                                            <source src="${x.path}"> </source>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row p-2"> <h4> Title </h4> </div>
+                                        <div class="row p-2"> ${x.videotitle} </div>
+                                        <div class="row p-2"> <h4> Description </h4> </div>
+                                        <div class="row p-2"> ${x.videodescription} </div>
+                                        <div class="row p-2"> <h4> Sequence </h4> </div>
+                                        <div class="row p-2"> ${x.sequencenumber} </div>
+                                        <div class="row p-2"> <button class="btn btn-danger w-25"  id="${x.sequencenumber}"> Delete </button> </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                        videosblock.append(video_block);
                     
-                        console.log(document.getElementById(x.sequencenumber))
+                        // console.log(document.getElementById(x.sequencenumber))
                         bindEvents(x.sequencenumber,coursename,x.path);
                     }
                 });
@@ -57,8 +64,16 @@
     jQuery(document).ready(function(){
         var form = jQuery('#videoinput');
 
+        // document.getElementById('videotitle')
+
+        // var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        
+
         var coursename = document.getElementById('coursename').value;
-        var videosblock = jQuery('#videos');
+        // var videosblock = jQuery('#videos');
         var requestConfig = {
             method: 'GET',
             url: '/mainpage/uploadedvideos/'+ coursename,
@@ -67,22 +82,33 @@
         jQuery.ajax(requestConfig).then(function (responseMessage){
             responseMessage = JSON.parse(responseMessage)
             console.log(responseMessage)
+            debugger;
+
             for(let x of responseMessage[0].videos){
                 var videosblock = jQuery('#videos')
                 console.log(x.videotitle)
-                videosblock.append(jQuery('<div>').attr("class","container p-2")
-                .append((jQuery('<div>')).attr("class","row")
-                .append(jQuery('<div>').attr("class","col-6")
-                .append(jQuery('<div>').attr('class',"container p-2")
-                .append(jQuery('<video controls>').attr("style","height: -moz-available; width: -moz-available;")
-                .append(jQuery('<source>').attr("src",x.path).attr("type","video/mp4")))))
-                .append(jQuery('<div>').attr("class","col-6")
-                .append(jQuery('<div>').attr("class","container p-2")
-                .append(jQuery('<div>').attr('class',"row p-2").append('<h3>').html(x.videotitle))
-                .append(jQuery('<div>').attr('class',"row p-2").html(x.videodescription))
-                .append(jQuery('<div>').attr('class','row p-2').html(x.sequencenumber))
-                .append(jQuery('<div>').attr('class',"row p-2").append(jQuery('<button>').attr('class','btn btn-danger w-25').attr('id',x.sequencenumber).html("Delete")))
-                ))))
+
+                let video_block = `
+                            
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="container p-2">
+                                            <video controls style="height: 300px; width:533.25px">
+                                            <source src="${x.path}"> </source>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class= "row">
+
+                                        <div class= "row pb-1"> <span> <b> Title: </b> ${x.videotitle} </span> </div>
+                                        <div class= "row pb-1"> <span> <b> Description: </b> ${x.videodescription} </span> </div>
+                                        <div class= "row pb-3"> <span> <b> Sequence Number: </b> ${x.sequencenumber} </span> </div>
+                                        </div>
+                                        <div class="row ms-1"> <button class="btn btn-danger w-25"  id="${x.sequencenumber}"> Delete </button> </div>
+                                    </div>
+                                </div>
+                        `
+                        videosblock.append(video_block);
 
                 console.log(document.getElementById(x.sequencenumber))
                 bindEvents(x.sequencenumber,coursename,x.path);
@@ -90,56 +116,82 @@
         });
 
         form.submit(function(event){
-            event.preventDefault();
+            
             debugger;
+            event.preventDefault();
             
             var files = document.getElementById('video').files[0];
             var coursename = document.getElementById('coursename').value;
             var videotitle = document.getElementById('videotitle').value;
-            var sequencenumber = document.getElementById('sequencenumber').value;
             var description = document.getElementById('videodescription').value;
             formData = new FormData();
 
-            formData.append('video',files);
-            formData.append('coursename',coursename);
-            formData.append('videotitle',videotitle);
-            formData.append('sequencenumber',sequencenumber);
-            formData.append('description',description);
+            errormessages = []
+            if(!files){
+                errormessages.push("fileinput empty")
+            }
+            if(!videotitle || videotitle.trim() == "" || typeof(videotitle) != "string"){
+                errormessages.push("Video tilte must be a string and non empty")
+            }
 
-            var requestConfig = {
-                method: 'POST',
-                url: '/mainpage/uploadvideo',
-                contentType: 'multipart/form-data',
-                data: formData,
-                processData: false,
-                contentType: false
-            };
-
-
-            jQuery.ajax(requestConfig).then(function (responseMessage){
-                // console.log(responseMessage);
-                // responseMessage = JSON.parse(responseMessage)
-                videoinfo = responseMessage.data
-                console.log(videoinfo.videotitle)
-                var videosblock = jQuery('#videos')
+            if(errormessages.length >0){
+                let estring = "<ul>"
+                for(let x of errormessages){
+                    estring = estring + `<li> ${x} </li>`
+                }
+                document.getElementById("errors").innerHTML = estring;
+                //validation
+            }
             
-                videosblock.append(jQuery('<div>').attr("class","container p-2")
-                .append((jQuery('<div>')).attr("class","row")
-                .append(jQuery('<div>').attr("class","col-6")
-                .append(jQuery('<div>').attr('class',"container p-2")
-                .append(jQuery('<video controls>').attr("style","height: -moz-available; width: -moz-available;")
-                .append(jQuery('<source>').attr("src",videoinfo.path).attr("type","video/mp4")))))
-                .append(jQuery('<div>').attr("class","col-6")
-                .append(jQuery('<div>').attr("class","container p-2")
-                .append(jQuery('<div>').attr('class',"row p-2").append('<h3>').html(videoinfo.videotitle))
-                .append(jQuery('<div>').attr('class',"row p-2").html(videoinfo.videodescription))
-                .append(jQuery('<div>').attr('class','row p-2').html(videoinfo.sequencenumber))
-                .append(jQuery('<div>').attr('class',"row p-2").append(jQuery('<button>').attr('class','btn btn-danger w-25').attr('id',videoinfo.sequencenumber).html("Delete")))
-                ))))
+                formData.append('video',files);
+                formData.append('coursename',coursename);
+                formData.append('videotitle',videotitle);
+                formData.append('description',description);
+            
+                var requestConfig = {
+                    method: 'POST',
+                    url: '/mainpage/uploadvideo',
+                    contentType: 'multipart/form-data',
+                    data: formData,
+                    processData: false,
+                    contentType: false
+                };
 
-                bindEvents(videoinfo.sequencenumber,coursename,videoinfo.path);
-                //}
-            });
+
+                jQuery.ajax(requestConfig).then(function (responseMessage){
+                    // console.log(responseMessage);
+                    // responseMessage = JSON.parse(responseMessage)
+                    videoinfo = responseMessage.data
+                    console.log(videoinfo.videotitle)
+                    var videosblock = jQuery('#videos')
+                    // console.log(x.videotitle)
+
+                    let video_block = `
+                            <div class="container m-0">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="container p-2">
+                                            <video controls style="height: 300px; width:533.25px">
+                                            <source src="${videoinfo.path}"> </source>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class= "row">
+                                        <div class= "row pb-1"> <span> <b> Title: </b> ${videoinfo.videotitle} </span> </div>
+                                        <div class= "row pb-1"> <span> <b> Description: </b> ${videoinfo.videodescription} </span> </div>
+                                        <div class= "row pb-3"> <span> <b> Sequence Number: </b> ${videoinfo.sequencenumber} </span> </div>
+                                        </div>
+                                        <div class="row ms-1"> <button class="btn btn-danger w-25"  id="${videoinfo.sequencenumber}"> Delete </button> </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                            videosblock.append(video_block);
+
+                    bindEvents(videoinfo.sequencenumber,coursename,videoinfo.path);
+                    //}
+                });
+            
         });
     });
 })(jQuery);

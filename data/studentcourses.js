@@ -41,10 +41,10 @@ async function addcourse(coursename,studentusername,teacherusername,type){
 
 
 
-async function recommendedcourses(){
+async function allCourses(){
     const coursescollection = await courses();
         const insertInfo = await coursescollection
-          .find({})
+          .find({"deployed": 0})
           .toArray();
         return insertInfo;
 }
@@ -52,17 +52,23 @@ async function recommendedcourses(){
 async function enrolledcourses(username){
     const coursescollection = await studentcourses();
         const enrolledinfo = await coursescollection
-          .find({ $and: [{ studentusername: username },{type:"enrolled"}]},{ projection: { coursename: 1, _id: 0 } })
+          .find({ $and: [{ "studentusername": username },{"type":"enrolled"}]},{ projection: { "course_id": 1, "coursename": 1, "_id": 0 } })
           .toArray();
-        return enrolledinfo;
+        let enrolledcourses = []
+        for( let x =0 ; x < enrolledinfo.length ; x++){
+            enrolledcourses.push(await coursescollection.findOne({"course_id":enrolledinfo[x].course_id}))
+        }
+        console.log(enrolledcourses)
+        return enrolledcourses;
 }
 
 async function recommend(username){
     const coursescollection= await courses()
     const studentcoursecollection= await studentcourses()
     const insertInfo = await coursescollection.find({}).toArray();
-    const enrolledinfo = await studentcoursecollection.find({ $and: [{ studentusername: username },{type:"enrolled"}]},{ projection: { coursename: 1, _id: 0 } }).toArray();
-    
+    const enrolledinfo = await studentcoursecollection.find({ $and: [{ "studentusername": username },{"type":"enrolled"}]},{ projection: { "coursename": 1, "_id": 0 } }).toArray();
+    let recommendations
+
     for(i=0;i<enrolledinfo.length;i++){
         recommendations=[]
         // console.log(insertInfo[i].coursename)
@@ -76,7 +82,34 @@ async function recommend(username){
     }
     return recommendations
 }
+const getStudentcourseById = async(id) => {
+    const enrolledCollection = await courses();
+    const enrolledCourse = await enrolledCollection.findOne({_id: ObjectId(id)});
+    return enrolledCourse;
+}
 
+
+const getCourseByNameAndCourse = async(courseName, username) => {
+    const coursescoll = await courses();
+    const course = await coursescoll.findOne({$and:[{"username": username}, {"coursename": courseName}]})
+    //console.log('Course: ',course)
+    return course;
+}
+
+const getVideoSequenceByUserAndCourse = async(courseName, username) => {
+    // const enrolledCourseCollection = await enrolledcourses();
+    let studentcourescollection = await studentcourses()
+    const enrolledCourse = await studentcourescollection.findOne({$and:[{"studentusername": username}, {"coursename": courseName}]})
+    return enrolledCourse.videos;
+}
+const updateVideoSequenceByUserAndCourse = async(coursename, username, seq) => {
+    const enrolledCourseCollection = await studentcourses();
+    const res = await enrolledCourseCollection.updateOne({$and:[{"coursename":coursename}, {"studentusername": username}]}, 
+        {$set : {"videos": seq}});
+        if(res.upsertedCount == 0){
+            throw "Couldn't update video sequence"
+        } 
+}
 
 
 // async function main(){
@@ -85,7 +118,11 @@ async function recommend(username){
 // main()
 module.exports={
     addcourse,
-    recommendedcourses,
+    allCourses,
     enrolledcourses,
-    recommend
+    recommend,
+    getStudentcourseById,
+    getVideoSequenceByUserAndCourse,
+    updateVideoSequenceByUserAndCourse,
+    getCourseByNameAndCourse
 }

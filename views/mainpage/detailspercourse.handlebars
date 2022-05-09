@@ -1,5 +1,12 @@
 <div class="container p-5">
-      <div class="row bg-light">
+  <div class="row bg-light">
+    <div class="btn-group pb-3 ps-0 pe-0">
+      <a href="#description" class="btn btn-primary active" aria-current="page">Course Info</a>
+      <a href="#uploadassignments" class="btn btn-primary">Upload Assignments</a>
+      <a href="#studentssummary" class="btn btn-primary">Student Summary</a>
+    </div>
+    </div>
+      <div class="row bg-light" id="description">
         <h1> {{coursedata.coursename}} </h1>
         <div class="pt-3">
           <div class="row p-3">
@@ -20,7 +27,7 @@
           </div>
         </div>
       </div>
-      <div class="row pt-5">
+      <div class="row pt-5" id="uploadassignments">
         <h3> Upload Assignments: </h3>
       </div>
       <form id="assignment" class="border bg-dark" enctype="multipart/form-data">
@@ -71,9 +78,46 @@
     <div class="container bg-light p-5" id="assignments">
       
     </div>
-    <div class="row p-5 d-flex justify-content-center">
-      <button type="submit" style="width: 150px" class="btn btn-primary"> Add Course </button>
+    {{#if studentsenrolled}}
+    <div class="row bg-light mt-3 ms-0 me-0" id="studentssummary">
+      <h3> Students Summary </h3>
     </div>
+      <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th> Profile Pic</th>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Average Grades </th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {{#each studentsenrolled}}
+                <tr>
+                    <td> <img src="/public/images/profileimg.webp" style="height:100px; width: 100px;" alt="not found"></td>
+                    <td> {{this.firstname}}</td>
+                    <td>{{this.lastname}}</td>
+                    <td>{{this.grade}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+      </table>
+      {{else}}
+        {{#if buttonrequired}}
+        <div class="row p-5 d-flex justify-content-center">
+          <a type="submit" href="/mainpage/deplaycourse " id="deploycourse" style="width: 150px" class="btn btn-primary"> Add Course </a>
+        </div>
+        {{else}}
+          <div class="pt-3">
+            <div class="row p-3">
+              <b>Students Summary </b>
+              No Student has enrolled this course.
+            </div>
+          </div>
+        {{/if}}
+
+    {{/if}}
 </div>
 
 
