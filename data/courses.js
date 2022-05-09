@@ -8,6 +8,12 @@ const { dropdowndata } = require('../config/mongoCollections');
 const Validations = require('../Validation/Validations')
 
 module.exports = { 
+    getCourseByNameAndCourse: async(courseName, username) => {
+        const courses = await courseCollection();
+        const course = await courses.findOne({$and:[{username: username}, {coursename: courseName}]})
+        //console.log('Course: ',course)
+        return course;
+    },
     gettagsdropdown: async(type)=>{
         const dropdowndatacollection = await dropdowndata();
         try{

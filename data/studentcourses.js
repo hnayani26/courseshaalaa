@@ -45,7 +45,7 @@ async function addcourse(coursename,studentusername,teacherusername,type){
 async function allCourses(){
     const coursescollection = await courses();
         const insertInfo = await coursescollection
-          .find({})
+          .find({"deployed": 0})
           .toArray();
         return insertInfo;
 }
@@ -89,12 +89,41 @@ async function recommend(username){
         return insertInfo
     }
 }
+const getStudentcourseById = async(id) => {
+    const enrolledCollection = await courses();
+    const enrolledCourse = await enrolledCollection.findOne({_id: ObjectId(id)});
+    return enrolledCourse;
+}
 
+
+const getCourseByNameAndCourse = async(courseName, username) => {
+    const coursescoll = await courses();
+    const course = await coursescoll.findOne({$and:[{"username": username}, {"coursename": courseName}]})
+    //console.log('Course: ',course)
+    return course;
+}
+
+<<<<<<< HEAD
+const getVideoSequenceByUserAndCourse = async(courseName, username) => {
+    // const enrolledCourseCollection = await enrolledcourses();
+    let studentcourescollection = await studentcourses()
+    const enrolledCourse = await studentcourescollection.findOne({$and:[{"studentusername": username}, {"coursename": courseName}]})
+    return enrolledCourse.videos;
+}
+const updateVideoSequenceByUserAndCourse = async(coursename, username, seq) => {
+    const enrolledCourseCollection = await studentcourses();
+    const res = await enrolledCourseCollection.updateOne({$and:[{"coursename":coursename}, {"studentusername": username}]}, 
+        {$set : {"videos": seq}});
+        if(res.upsertedCount == 0){
+            throw "Couldn't update video sequence"
+        } 
+=======
 async function getdetailsforsubmission(id){
     let coursescollection = await courses();
     let new_obj = await coursescollection.findOne({"assignments._id": ObjectId(id)}, {projection: {"username": 1, "coursename": 1, "serialnumber": 1}})
     console.log(new_obj);
     return new_obj;
+>>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
 }
 
 async function adduploadedassignment(obj){
@@ -147,6 +176,13 @@ module.exports={
     allCourses,
     enrolledcourses,
     recommend,
+<<<<<<< HEAD
+    getStudentcourseById,
+    getVideoSequenceByUserAndCourse,
+    updateVideoSequenceByUserAndCourse,
+    getCourseByNameAndCourse
+=======
     getdetailsforsubmission,
     adduploadedassignment
+>>>>>>> 81c17f14a75a2aeabc6c51f3bbec1eb1e2ceded1
 }
