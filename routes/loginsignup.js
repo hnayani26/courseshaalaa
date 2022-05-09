@@ -11,6 +11,7 @@ const coursesCollection = mongoCollection.courses;
 const studentCoursersCollection = mongoCollection.studentcourses;
 const dropdownCollection = mongoCollection.dropdowndata;
 const userCollection = mongoCollection.users;
+var xss = require("xss");
 
 router.get('/',async (req,res)=>{
   if(req.session.user){

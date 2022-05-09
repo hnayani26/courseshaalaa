@@ -5,14 +5,20 @@ const fs = require('fs');
 const res = require('express/lib/response');
 const router = express.Router();
 const data = require('../data')
+const Validations = require('../Validation/Validations')
+var xss = require("xss");
 
 router.use(upload())
 
 router.get('/',async function(req,res){                 // when ever the login this page will be displayed( like a main page ) 
-    let username = req.session.user.username;        // changed
+    let username = xss(req.session.user.username);        // changed 
     // let username = 'user3'
+    try{
+        Validations.checkString(username);
+    }catch(e){
+        res.render('./error')
+    }
     let courses;
-
     let coursesData = data.courses;
 
     try{
@@ -55,7 +61,7 @@ router.get('/createcourse', async function(req,res){
 })
 
 router.post('/addcourse',async function(req,res){
-    let body = req.body;
+    let body = xss(req.body);
     let course = {
         coursename: body.coursename,
         coursetag: body.coursetag,
@@ -76,7 +82,7 @@ router.post('/addcourse',async function(req,res){
             console.log("did not inserted")
         }
     }catch(e){
-        console.log(e)
+        return res.render('./error') //console.log(e)
     }
 })
 
@@ -87,7 +93,7 @@ router.get('/gettagsfordropdown',async function(req,res){
     try{
         tags = await coursesData.gettagsdropdown("tags");
     }catch(e){
-        throw e
+        return res.render('./error') // e
     }
 
     // console.log(tags[0].tags);
@@ -95,8 +101,8 @@ router.get('/gettagsfordropdown',async function(req,res){
 })
 
 router.get('/uploadedassignments/:id', async function(req,res){
-    let username = req.session.user.username;
-    let coursename = req.params.id;
+    let username = xss(req.session.user.username);
+    let coursename =xss(req.params.id);
 
     // let username = 'user3';
     // let coursename = 'Web Technologies';
@@ -107,14 +113,14 @@ router.get('/uploadedassignments/:id', async function(req,res){
     try{ 
         assignments = await coursesData.getallasignments(coursename,username); 
     }catch(e){
-        throw e;
+        return res.render('./error')//throw e;
     }
     return res.json(assignments)
 })
 
 router.get('/uploadedvideos/:id',async function(req,res){
-    let username = req.session.user.username;
-    let coursename = req.params.id;
+    let username = xss(req.session.user.username);
+    let coursename = xss(req.params.id);
 
     // let username = 'user3';
     // let coursename = 'Web Technologies';
@@ -125,7 +131,7 @@ router.get('/uploadedvideos/:id',async function(req,res){
     try{ 
         result = await videodetails.getallvideodetails(coursename,username);
     }catch(e){
-        throw e
+        return res.render('./error')//throw e
     }
     
     result = JSON.stringify(result);
@@ -134,8 +140,8 @@ router.get('/uploadedvideos/:id',async function(req,res){
 })
 
 router.get('/details/:id', async function(req,res){                //This route will fetch all the details of the assignment
-    const coursename = req.params.id
-    const username = req.session.user.username
+    const coursename = xss(req.params.id)
+    const username = xss(req.session.user.username)
     
     // const username = 'user3';
     // const coursename = 'Web Technologies';
@@ -145,7 +151,7 @@ router.get('/details/:id', async function(req,res){                //This route 
     try{
     cdata = await coursedata.getcourse(coursename,username);
     }catch(e){
-        throw e;
+        return res.render('./error') //throw e;
     }
 
     if(cdata.deployed === 0){
@@ -155,15 +161,15 @@ router.get('/details/:id', async function(req,res){                //This route 
         try{ 
             sdata = await coursedata.getstudentsenroled(coursename,username);
         }catch(e){
-            throw e;
+            return res.render('./error') //throw e;
         }
         res.render('./mainpage/detailspercourse', {coursename: coursename, coursedata: cdata, studentsenrolled: sdata})
     }
 })
 
 router.get('/:id',async function(req,res){
-    const coursename = req.params.id
-    const username = req.session.user.username
+    const coursename = xss(req.params.id)
+    const username = xss(req.session.user.username)
     
     // const username = 'user3';
     // const coursename = 'Web Technologies';
@@ -174,15 +180,15 @@ router.get('/:id',async function(req,res){
         res.render('./mainpage/coursedetails',{ navbar: true, data: data})
     }
     catch(e){
-        throw e
+        return res.render('./error') //throw e
     }
     console.log(coursename)
 })
 
 router.post('/addassignment',async function(req,res){
-    let username = req.session.user.username;
+    let username = xss(req.session.user.username);
     // let username = 'user3';
-    let object = req.body;
+    let object = xss(req.body);
     console.log(object);
 
     let addassignment = data.courses;
@@ -190,14 +196,14 @@ router.post('/addassignment',async function(req,res){
     try{
         assignment = await addassignment.addassignment(object,username);
     }catch(e){
-        console.log(e)
+        return res.render('./error') //console.log(e)
     }
     return res.json({assignment: object});
 })
 
 router.post('/updateassignment',async function(req,res){
     let username = "user3";
-    let object = req.body;
+    let object = xss(req.body);
     console.log(object);
 
     let updateassignment = data.courses;
@@ -205,16 +211,16 @@ router.post('/updateassignment',async function(req,res){
     try{
         assignment = await updateassignment.updateassignment(object,username);
     }catch(e){
-        throw e
+        return res.render('./error') //throw e
     }
     return res.json({status: "true"})
 })
 
 router.post('/uploadvideo',async function(req,res){             // when the teacher press upload video button this post method is called.
-    let filedata = req.files.video;
-    let filename = req.files.video.name;
+    let filedata = xss(req.files.video);
+    let filename = xss(req.files.video.name);
 
-    let username = req.session.user.username;
+    let username = xss(req.session.user.username);
     // let username = 'user3'
     let coursename = decodeURI(req.body.coursename);
     let videotitle = decodeURI(req.body.videotitle);
@@ -234,7 +240,7 @@ router.post('/uploadvideo',async function(req,res){             // when the teac
         fs.mkdirSync("." + initialpath + username + "/" + coursename + "/videos");
       }
     } catch (err) {
-      console.error(err);
+      return res.render('./error') //console.error(err);
     }
 
     let finalpath = initialpath + username + "/" + coursename + "/videos/"
@@ -263,7 +269,7 @@ router.post('/uploadvideo',async function(req,res){             // when the teac
     try{ 
         result = await addvideo.addvideo(transferdata)
     }catch(e){
-        throw e;
+        return res.render('./error') //throw e;
     }
     // testing file names
 
@@ -271,7 +277,7 @@ router.post('/uploadvideo',async function(req,res){             // when the teac
 })
 
 router.post('/deleteassignment',async function(req,res){
-    let reqdata = req.body
+    let reqdata = xss(req.body)
     let username = user.session.user.username
     // let username = 'user3'
     let coursename = decodeURI(reqdata.coursename);
@@ -283,15 +289,15 @@ router.post('/deleteassignment',async function(req,res){
     try{
         result = await assignments.deleteassignment(coursename,username,sequencenumber)
     }catch(e){
-        throw e;
+        return res.render('./error') //throw e;
     }
     return res.json({status: true});
 })
 
 router.post('/deletevideo',async function(req,res){
-    let username = req.session.user.username;
+    let username = xss(req.session.user.username);
     
-    let reqdata = req.body
+    let reqdata = xss(req.body)
     // let username = 'user3'
     let coursename = decodeURI(reqdata.coursename);
     let sequencenumber = decodeURI(reqdata.deleteId);
@@ -309,22 +315,22 @@ router.post('/deletevideo',async function(req,res){
     try{
         result = await videos.deletevideo(coursename,username,sequencenumber)
     }catch(e){
-        throw e;
+        return res.render('./error') //throw e;
     }
     return res.json({status: true});
 })
 
 router.post('/deploycourse',async function(req,res){
 
-    let username = req.session.user.username
+    let username = xss(req.session.user.username)
     // username = 'user3'
-    let coursename = req.body.coursename
+    let coursename = xss(req.body.coursename)
     
     let courses = data.courses;
     try{
         result = await courses.deploycourse(coursename,username)
     }catch(e){
-        throw(e);
+        return res.render('./error') //throw(e);
     }
     return res.json({status: false})
 })
