@@ -54,6 +54,8 @@ router.get('/profile', async function(req, res) {
     let username = req.session.user.username; 
     let usersData = data.users;
     let userDetails = await usersData.findUserByUsername(username);
+    userDetails['isStudent'] = userDetails.usertype == 'student'
+    userDetails['isTeacher'] = userDetails.usertype == 'teacher'
     res.render("./mainpage/profile", {userDetails: userDetails});
 });
 
