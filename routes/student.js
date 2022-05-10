@@ -18,18 +18,18 @@ router.get("/", async function (req, res, next) {
       let enroll=await coursesData.enrolledcourses(username)
       let recommenda=await coursesData.recommend(username)
       
-      for(x in courses){
-        let string = ""
-        for(let y of courses[x].description){
-            string = string + y;
-            if(y === '.'){
-                string = string + y;
-                break;
-            }
-        }
-        courses[x].description = string;
-        courses[x]._id = courses[x]._id.toString();
-      }
+      // for(x in courses){
+      //   let string = ""
+      //   for(let y of courses[x].description){
+      //       string = string + y;
+      //       if(y === '.'){
+      //           string = string + y;
+      //           break;
+      //       }
+      //   }
+      //   courses[x].description = string;
+      //   courses[x]._id = courses[x]._id.toString();
+      // }
 
       // for(x in enroll){
       //   let string = ""

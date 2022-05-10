@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-6 ps-0">
                     <label for="coursename" class="form-label" style="padding-left: 12px;">Course Name</label>
-                    <input type="text" class="form-control" id="coursename" name="coursename">
+                    <input type="text" class="form-control" id="coursename" name="coursename" required>
                 </div>
                 <div class="col-6 pe-0">
                     {{!-- <label for="shortdescription" class="form-label">Short Description</label>
@@ -19,19 +19,19 @@
             </div>
             <div class="row pt-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+                <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
             </div>
             <div class="row pt-3">
                 <div class="col-6 ps-0">
                     <label for="startdate" class="form-label" style="padding-left:12px;"> Start Date </label>
                     <div class="input-group date" id="startdatepicker">
-                        <input type="date" class="form-control" id="startdate" name="startdate">
+                        <input type="date" class="form-control" id="startdate" name="startdate" required>
                     </div>
                 </div>
                 <div class="col-6 pe-0">
                     <label for="enddate" class="form-label" style="padding-left: 12px;"> End Date </label>
                     <div class="input-group date" id="enddatepicker">
-                        <input type="date" class="form-control" id="enddate" name="enddate">
+                        <input type="date" class="form-control" id="enddate" name="enddate"  required>
                     </div>
                 </div>
             </div>
