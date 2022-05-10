@@ -323,6 +323,7 @@ router.post('/deploycourse',async function(req,res){
     let courses = data.courses;
     try{
         result = await courses.deploycourse(coursename,username)
+        res.redirect('/mainpage');
     }catch(e){
         throw(e);
     }
