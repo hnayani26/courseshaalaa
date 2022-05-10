@@ -17,3 +17,7 @@ greater depth.
 Teachers can create assignments and change the course description.
 Working courses displays the current courses he is teaching.
 Students can access the teacher's courses, assignments, and videos.
+Students will begin by logging in.
+He can then see all of the courses, including those that he is presently enrolled in and those that
+have been recommended to him. He can see the assignments and videos by clicking on the
+course details.
