@@ -1,10 +1,9 @@
-# Courseshaalaa
+# Courseshaalaa 
 
 # Steps to Follow
 - Step 1: node seed.js
 - Step 2: npm start
 - Step 3: http://localhost:3000/login
-# Github Repo: https://github.com/apate211/courseshaalaa.git
 
 ## Code is in the master branch
 
